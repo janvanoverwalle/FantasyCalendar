@@ -5,6 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -102,6 +103,35 @@ public class Calendar {
     private Map<String, String> notes;
 
     public Calendar() {
+        this("n/a");
+    }
+
+    public Calendar(String name) {
+        this.name = name;
+
+        this.yearLength = 0;
+        this.events = false;
+
+        this.numMonths = 0;
+        this.months = new String[numMonths];
+        this.monthLengths = new HashMap<String, Integer>();
+
+        this.weekLength = 0;
+        this.weekDays = new String[weekLength];
+
+        this.numMoons = 0;
+        this.moons = new String[numMoons];
+
+        this.lunarCycles = new HashMap<String, Float>();
+        this.lunarShifts = new HashMap<String, Integer>();
+
+        this.year = 0;
+        this.firstDay = 0;
+
+        this.notes = new HashMap<String, String>();
+    }
+
+    public void loadEarth() {
         name = "Earth";
 
         yearLength = 365;
@@ -205,9 +235,7 @@ public class Calendar {
         return monthLengths;
     }
 
-    public void setMonthLengths(Map<String, Integer> monthLengths) {
-        this.monthLengths = monthLengths;
-    }
+    public void setMonthLengths(Map<String, Integer> monthLengths) { this.monthLengths = monthLengths;  }
 
     public int getWeekLength() {
         return weekLength;
@@ -294,21 +322,72 @@ public class Calendar {
             JSONObject jsonObject = new JSONObject(jsonData);
 
             c.setYearLength(jsonObject.getInt("year_len"));
-            c.setEvents(jsonObject.getBoolean("events"));
+            c.setEvents(jsonObject.getInt("events") == 1);
 
             c.setNumMonths(jsonObject.getInt("n_months"));
             JSONArray jsonMonths = jsonObject.getJSONArray("months");
-            JSONArray jsonMonthLengths = jsonObject.getJSONArray("month_len");
+            JSONObject jsonMonthLengths = jsonObject.getJSONObject("month_len");
 
             String[] months = new String[c.getNumMonths()];
             Map<String, Integer> monthLengths = new HashMap<String, Integer>();
 
             for (int i = 0; i < jsonMonths.length(); ++i) {
                 months[i] = jsonMonths.get(i).toString();
-                int monthLength = jsonMonthLengths.getJSONObject(i).getInt(months[i]);
+                int monthLength = jsonMonthLengths.getInt(months[i]);
                 monthLengths.put(months[i], monthLength);
             }
             c.setMonths(months);
+            c.setMonthLengths(monthLengths);
+
+            c.setWeekLength(jsonObject.getInt("week_len"));
+            JSONArray jsonWeeks = jsonObject.getJSONArray("weekdays");
+
+            String[] weeks = new String[c.getWeekLength()];
+
+            for (int i = 0; i < jsonWeeks.length(); ++i) {
+                weeks[i] = jsonWeeks.get(i).toString();
+            }
+            c.setWeekDays(weeks);
+
+            c.setNumMoons(jsonObject.getInt("n_moons"));
+            JSONArray jsonMoons = jsonObject.getJSONArray("moons");
+            JSONObject jsonLunarCycles = jsonObject.getJSONObject("lunar_cyc");
+            JSONObject jsonLunarShifts = jsonObject.getJSONObject("lunar_shf");
+
+            String[] moons = new String[c.getNumMoons()];
+            Map<String, Float> lunarCycles = new HashMap<String, Float>();
+            Map<String, Integer> lunarShifts = new HashMap<String, Integer>();
+
+            for (int i = 0; i < jsonMoons.length(); ++i) {
+                moons[i] = jsonMoons.get(i).toString();
+
+                float lunarCycle = (float) jsonLunarCycles.getDouble(moons[i]);
+                int lunarShift = jsonLunarShifts.getInt(moons[i]);
+
+                lunarCycles.put(moons[i], lunarCycle);
+                lunarShifts.put(moons[i], lunarShift);
+
+            }
+            c.setMoons(moons);
+            c.setLunarCycles(lunarCycles);
+            c.setLunarShifts(lunarShifts);
+
+            c.setYear(jsonObject.getInt("year"));
+            c.setFirstDay(jsonObject.getInt("first_day"));
+
+            JSONObject jsonNotes = jsonObject.getJSONObject("notes");
+
+            Map<String, String> notes = new HashMap<String, String>();
+
+            Iterator<?> keys = jsonNotes.keys();
+            while (keys.hasNext()) {
+                String key = (String)keys.next();
+                String value = jsonNotes.getString(key);
+
+                notes.put(key, value);
+            }
+
+            c.setNotes(notes);
 
         } catch (JSONException e) {
             e.printStackTrace();
