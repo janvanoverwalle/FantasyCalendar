@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.jvanoverwalle.fantasycalendar.models.Calendar;
 
@@ -34,16 +33,13 @@ public class OverviewListFragment extends Fragment {
         MainOverviewArrayAdapter mainOverviewAdapter = new MainOverviewArrayAdapter(getActivity(), calendars);
         listView.setAdapter(mainOverviewAdapter);
 
-        /*
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            // Wanneer er een rij aangeklikt wordt, sturen we de positie door naar de Listener
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                DetailListener detailListener = (DetailListener) getActivity();
-                detailListener.setFieldsAndPicture(position);
+                ICalendarClickListener calendarClickListener = (ICalendarClickListener) getActivity();
+                calendarClickListener.setCalendarContent(position);
             }
         });
-        */
 
         return view;
     }
