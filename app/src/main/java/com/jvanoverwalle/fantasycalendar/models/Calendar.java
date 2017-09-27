@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -78,6 +79,8 @@ public class Calendar {
     }
      */
     //endregion
+
+    private int _id;
 
     private String name;
 
@@ -191,6 +194,10 @@ public class Calendar {
     }
 
     //region Getters & Setters
+    public int getId() { return _id; }
+
+    public void setId(int id) { _id = id; }
+
     public String getName() {
         return name;
     }
@@ -227,13 +234,27 @@ public class Calendar {
         return months;
     }
 
+    public JSONArray getMonthsJSON() { return new JSONArray(Arrays.asList(months)); }
+
     public void setMonths(String[] months) {
         this.months = months;
+    }
+
+    public void setMonths(String monthsJSON) {
+        // TODO: Needs to be finished
+        try {
+            JSONObject json = new JSONObject(monthsJSON);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public Map<String, Integer> getMonthLengths() {
         return monthLengths;
     }
+
+    public JSONObject getMonthLengthsJSON() { return new JSONObject(monthLengths); }
 
     public void setMonthLengths(Map<String, Integer> monthLengths) { this.monthLengths = monthLengths;  }
 
@@ -248,6 +269,8 @@ public class Calendar {
     public String[] getWeekDays() {
         return weekDays;
     }
+
+    public JSONArray getWeekDaysJSON() { return new JSONArray(Arrays.asList(weekDays)); }
 
     public void setWeekDays(String[] weekDays) {
         this.weekDays = weekDays;
@@ -265,6 +288,8 @@ public class Calendar {
         return moons;
     }
 
+    public JSONArray getMoonsJSON() { return new JSONArray(Arrays.asList(moons)); }
+
     public void setMoons(String[] moons) {
         this.moons = moons;
     }
@@ -273,6 +298,8 @@ public class Calendar {
         return lunarCycles;
     }
 
+    public JSONObject getLunarCyclesJSON() { return new JSONObject(lunarCycles); }
+
     public void setLunarCycles(Map<String, Float> lunarCycles) {
         this.lunarCycles = lunarCycles;
     }
@@ -280,6 +307,8 @@ public class Calendar {
     public Map<String, Integer> getLunarShifts() {
         return lunarShifts;
     }
+
+    public JSONObject getLunarShiftsJSON() { return new JSONObject(lunarShifts); }
 
     public void setLunarShifts(Map<String, Integer> lunarShifts) {
         this.lunarShifts = lunarShifts;
@@ -305,6 +334,8 @@ public class Calendar {
         return notes;
     }
 
+    public JSONObject getNotesJSON() { return new JSONObject(notes); }
+
     public void setNotes(Map<String, String> notes) {
         this.notes = notes;
     }
@@ -315,11 +346,16 @@ public class Calendar {
         return name;
     }
 
+    /* Based on https://donjon.bin.sh/fantasy/calendar/ JSON data */
     public static Calendar loadFromJson(String jsonData) {
         Calendar c = new Calendar();
 
         try {
             JSONObject jsonObject = new JSONObject(jsonData);
+
+            if (jsonObject.has("name")) {
+                c.setName(jsonObject.getString("name"));
+            }
 
             c.setYearLength(jsonObject.getInt("year_len"));
             c.setEvents(jsonObject.getInt("events") == 1);
@@ -389,7 +425,8 @@ public class Calendar {
 
             c.setNotes(notes);
 
-        } catch (JSONException e) {
+        }
+        catch (JSONException e) {
             e.printStackTrace();
         }
 
