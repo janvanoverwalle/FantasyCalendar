@@ -131,7 +131,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         while(!res.isAfterLast()){
             Calendar c = new Calendar();
-
+/*
             c.setId(res.getInt(res.getColumnIndex(DbContract.CalendarTable._ID)));
             c.setName(res.getString(res.getColumnIndex(DbContract.CalendarTable.COL_NAME)));
             c.setYearLength(res.getInt(res.getColumnIndex(DbContract.CalendarTable.COL_YEAR_LENGTH)));
@@ -148,7 +148,7 @@ public class DbHelper extends SQLiteOpenHelper {
             c.setYear(res.getInt(res.getColumnIndex(DbContract.CalendarTable.COL_YEAR)));
             c.setFirstDay(res.getInt(res.getColumnIndex(DbContract.CalendarTable.COL_FIRST_DAY)));
             c.setNotes(res.getString(res.getColumnIndex(DbContract.CalendarTable.COL_NOTES)));
-
+*/
             calendars.add(c);
             res.moveToNext();
 
