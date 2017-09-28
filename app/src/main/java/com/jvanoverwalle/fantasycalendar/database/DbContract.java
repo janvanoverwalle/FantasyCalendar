@@ -8,7 +8,7 @@ import android.provider.BaseColumns;
 
 public class DbContract {
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "fantasy_calendar.db";
     public static final String TEXT_TYPE = " TEXT";
     public static final String INT_TYPE = " INTEGER";
@@ -35,6 +35,8 @@ public class DbContract {
         public static final String COL_LUNAR_CYCLES = "lunar_cycles"; // JSON string
         public static final String COL_LUNAR_SHIFTS = "lunar_shifts"; // JSON string
         public static final String COL_YEAR = "year";
+        public static final String COL_MONTH = "month";
+        public static final String COL_DAY_OF_MONTH = "day_of_month";
         public static final String COL_FIRST_DAY = "first_day";
         public static final String COL_NOTES = "notes"; // JSON string
 
@@ -54,6 +56,8 @@ public class DbContract {
                         COL_LUNAR_CYCLES + FLOAT_TYPE + COMMA_SEP +
                         COL_LUNAR_SHIFTS + INT_TYPE + COMMA_SEP +
                         COL_YEAR + INT_TYPE + COMMA_SEP +
+                        COL_MONTH + INT_TYPE + COMMA_SEP +
+                        COL_DAY_OF_MONTH + INT_TYPE + COMMA_SEP +
                         COL_FIRST_DAY + INT_TYPE + COMMA_SEP +
                         COL_NOTES + TEXT_TYPE +
                         " )";

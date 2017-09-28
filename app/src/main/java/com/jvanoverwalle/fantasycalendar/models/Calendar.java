@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,7 +14,7 @@ import java.util.Map;
  * Created by Jan Van Overwalle on 26/09/2017.
  */
 
-public class Calendar {
+public class Calendar implements Serializable {
     //region Example Json Data
     /*
     {
@@ -92,7 +93,7 @@ public class Calendar {
     private Map<String, Integer> monthLengths;
 
     private int weekLength;
-    private String[] weekDays;
+    private String[] weekdays;
 
     private int numMoons;
     private String[] moons;
@@ -101,6 +102,9 @@ public class Calendar {
     private Map<String, Integer> lunarShifts;
 
     private int year;
+    private int month;
+    private int dayOfMonth;
+
     private int firstDay;
 
     private Map<String, String> notes;
@@ -120,7 +124,7 @@ public class Calendar {
         this.monthLengths = new HashMap<String, Integer>();
 
         this.weekLength = 0;
-        this.weekDays = new String[weekLength];
+        this.weekdays = new String[weekLength];
 
         this.numMoons = 0;
         this.moons = new String[numMoons];
@@ -129,6 +133,9 @@ public class Calendar {
         this.lunarShifts = new HashMap<String, Integer>();
 
         this.year = 0;
+        this.month = 0;
+        this.dayOfMonth = 0;
+
         this.firstDay = 0;
 
         this.notes = new HashMap<String, String>();
@@ -169,14 +176,14 @@ public class Calendar {
         monthLengths.put("December",31);
 
         weekLength = 7;
-        weekDays = new String[weekLength];
-        weekDays[0] = "Sunday";
-        weekDays[1] = "Monday";
-        weekDays[2] = "Tuesday";
-        weekDays[3] = "Wednesday";
-        weekDays[4] = "Thursday";
-        weekDays[5] = "Friday";
-        weekDays[6] = "Saturday";
+        weekdays = new String[weekLength];
+        weekdays[0] = "Sunday";
+        weekdays[1] = "Monday";
+        weekdays[2] = "Tuesday";
+        weekdays[3] = "Wednesday";
+        weekdays[4] = "Thursday";
+        weekdays[5] = "Friday";
+        weekdays[6] = "Saturday";
 
         numMoons = 1;
         moons = new String[numMoons];
@@ -188,6 +195,9 @@ public class Calendar {
         lunarShifts.put("Luna", 20);
 
         year = 2017;
+        month = 0;
+        dayOfMonth = 0;
+
         firstDay = 0;
 
         notes = new HashMap<String, String>();
@@ -241,9 +251,13 @@ public class Calendar {
     }
 
     public void setMonths(String monthsJSON) {
-        // TODO: Needs to be finished
         try {
-            JSONObject json = new JSONObject(monthsJSON);
+            JSONArray json = new JSONArray(monthsJSON);
+
+            months = new String[json.length()];
+            for (int i = 0; i < json.length(); ++i) {
+                months[i] = json.get(i).toString();
+            }
         }
         catch (JSONException e) {
             e.printStackTrace();
@@ -256,7 +270,26 @@ public class Calendar {
 
     public JSONObject getMonthLengthsJSON() { return new JSONObject(monthLengths); }
 
-    public void setMonthLengths(Map<String, Integer> monthLengths) { this.monthLengths = monthLengths;  }
+    public void setMonthLengths(Map<String, Integer> monthLengths) { this.monthLengths = monthLengths; }
+
+    public void setMonthLengths(String monthLengthsJSON) {
+        try {
+            JSONObject json = new JSONObject(monthLengthsJSON);
+
+            monthLengths = new HashMap<String, Integer>();
+
+            Iterator<?> keys = json.keys();
+            while (keys.hasNext()) {
+                String key = (String)keys.next();
+                int value = json.getInt(key);
+
+                monthLengths.put(key, value);
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     public int getWeekLength() {
         return weekLength;
@@ -266,14 +299,28 @@ public class Calendar {
         this.weekLength = weekLength;
     }
 
-    public String[] getWeekDays() {
-        return weekDays;
+    public String[] getWeekdays() {
+        return weekdays;
     }
 
-    public JSONArray getWeekDaysJSON() { return new JSONArray(Arrays.asList(weekDays)); }
+    public JSONArray getWeekdaysJSON() { return new JSONArray(Arrays.asList(weekdays)); }
 
-    public void setWeekDays(String[] weekDays) {
-        this.weekDays = weekDays;
+    public void setWeekdays(String[] weekdays) {
+        this.weekdays = weekdays;
+    }
+
+    public void setWeekdays(String weekdaysJSON) {
+        try {
+            JSONArray json = new JSONArray(weekdaysJSON);
+
+            weekdays = new String[json.length()];
+            for (int i = 0; i < json.length(); ++i) {
+                weekdays[i] = json.get(i).toString();
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public int getNumMoons() {
@@ -294,6 +341,20 @@ public class Calendar {
         this.moons = moons;
     }
 
+    public void setMoons(String moonsJSON) {
+        try {
+            JSONArray json = new JSONArray(moonsJSON);
+
+            moons = new String[json.length()];
+            for (int i = 0; i < json.length(); ++i) {
+                moons[i] = json.get(i).toString();
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public Map<String, Float> getLunarCycles() {
         return lunarCycles;
     }
@@ -302,6 +363,25 @@ public class Calendar {
 
     public void setLunarCycles(Map<String, Float> lunarCycles) {
         this.lunarCycles = lunarCycles;
+    }
+
+    public void setLunarCycles(String lunarCyclesJSON) {
+        try {
+            JSONObject json = new JSONObject(lunarCyclesJSON);
+
+            lunarCycles = new HashMap<String, Float>();
+
+            Iterator<?> keys = json.keys();
+            while (keys.hasNext()) {
+                String key = (String)keys.next();
+                float value = (float) json.getDouble(key);
+
+                lunarCycles.put(key, value);
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public Map<String, Integer> getLunarShifts() {
@@ -314,12 +394,49 @@ public class Calendar {
         this.lunarShifts = lunarShifts;
     }
 
+    public void setLunarShifts(String lunarShiftsJSON) {
+        try {
+            JSONObject json = new JSONObject(lunarShiftsJSON);
+
+            lunarShifts = new HashMap<String, Integer>();
+
+            Iterator<?> keys = json.keys();
+            while (keys.hasNext()) {
+                String key = (String)keys.next();
+                int value = json.getInt(key);
+
+                lunarShifts.put(key, value);
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public int getYear() {
         return year;
     }
 
     public void setYear(int year) {
         this.year = year;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public String getMonthString() { return months[month]; }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
+    public int getDayOfMonth() {
+        return dayOfMonth;
+    }
+
+    public void setDayOfMonth(int dayOfMonth) {
+        this.dayOfMonth = dayOfMonth;
     }
 
     public int getFirstDay() {
@@ -338,6 +455,25 @@ public class Calendar {
 
     public void setNotes(Map<String, String> notes) {
         this.notes = notes;
+    }
+
+    public void setNotes(String notesJSON) {
+        try {
+            JSONObject json = new JSONObject(notesJSON);
+
+            notes = new HashMap<String, String>();
+
+            Iterator<?> keys = json.keys();
+            while (keys.hasNext()) {
+                String key = (String)keys.next();
+                String value = json.getString(key);
+
+                notes.put(key, value);
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
     //endregion
 
@@ -383,7 +519,7 @@ public class Calendar {
             for (int i = 0; i < jsonWeeks.length(); ++i) {
                 weeks[i] = jsonWeeks.get(i).toString();
             }
-            c.setWeekDays(weeks);
+            c.setWeekdays(weeks);
 
             c.setNumMoons(jsonObject.getInt("n_moons"));
             JSONArray jsonMoons = jsonObject.getJSONArray("moons");
@@ -409,6 +545,15 @@ public class Calendar {
             c.setLunarShifts(lunarShifts);
 
             c.setYear(jsonObject.getInt("year"));
+
+            if (jsonObject.has("month")) {
+                c.setMonth(jsonObject.getInt("month") - 1);
+            }
+
+            if (jsonObject.has("day_of_month")) {
+                c.setDayOfMonth(jsonObject.getInt("day_of_month"));
+            }
+
             c.setFirstDay(jsonObject.getInt("first_day"));
 
             JSONObject jsonNotes = jsonObject.getJSONObject("notes");

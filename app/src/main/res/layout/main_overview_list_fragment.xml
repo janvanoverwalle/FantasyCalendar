@@ -20,6 +20,6 @@
         android:layout_marginTop="4dp"
         android:layout_marginBottom="8dp"
         android:padding="10dp"
-        android:text="@string/example_text"/>
+        android:text="@string/create_new_calendar"/>
 
 </LinearLayout>
